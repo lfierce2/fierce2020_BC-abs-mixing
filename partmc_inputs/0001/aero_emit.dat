@@ -1,0 +1,3 @@
+time 0 43200 
+rate 1 0 
+dist  aero_emit_dist.dat aero_emit_dist.dat

@@ -1,0 +1,14 @@
+mode_name back_big
+mass_frac aero_back_comp.dat
+num_conc 7452421.1829 
+mode_type log_normal
+geom_mean_diam 1.16e-07 
+log10_geom_std_dev 0.217 
+   
+mode_name back_small
+mass_frac aero_back_comp.dat
+num_conc 219463635.6716 
+mode_type log_normal
+geom_mean_diam 2e-08 
+log10_geom_std_dev 0.161 
+   

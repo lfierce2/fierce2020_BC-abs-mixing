@@ -1,0 +1,3 @@
+time 0 43200 86400 129600 172800 216000 259200 
+rate 0.1 0 0.1 0 0.1 0 0.1 
+dist  aero_emit_dist.dat aero_emit_dist.dat aero_emit_dist.dat aero_emit_dist.dat aero_emit_dist.dat aero_emit_dist.dat aero_emit_dist.dat

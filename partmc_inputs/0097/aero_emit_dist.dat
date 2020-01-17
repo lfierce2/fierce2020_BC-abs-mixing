@@ -1,0 +1,21 @@
+mode_name cooking
+mass_frac aero_emit_comp_cooking.dat
+num_conc 249741.5644 
+mode_type log_normal
+geom_mean_diam 1.549e-07 
+log10_geom_std_dev 0.24 
+   
+mode_name gasoline
+mass_frac aero_emit_comp_diesel.dat
+num_conc 9375624.6611 
+mode_type log_normal
+geom_mean_diam 9.4806e-08 
+log10_geom_std_dev 0.24 
+   
+mode_name diesel
+mass_frac aero_emit_comp_gasol.dat
+num_conc 9686552.6793 
+mode_type log_normal
+geom_mean_diam 7.3348e-08 
+log10_geom_std_dev 0.24 
+   
