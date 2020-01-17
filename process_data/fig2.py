@@ -22,13 +22,6 @@ from scipy.stats import gaussian_kde
 # =============================================================================
 # LOAD TOOLBOX
 # =============================================================================
-import os
-toolbox = '../../code/process_partmc/'
-cwd = os.getcwd()
-os.chdir(toolbox)
-from read_partmc import *
-from general_tools import *
-os.chdir(cwd)
 
 wavelength = 532*1e-9
 
@@ -51,8 +44,7 @@ col_cs_uniform = 'k'
 #
 ####################################################################################
     
-read_dir = '/Users/fiercenator/stuff/projects/01_BCabs_mixing/Re__BC_absorption_measurements/'
-observational_dat = np.genfromtxt(read_dir + 'FontanaDataToLauraFierce-090817.txt',delimiter='\t',skip_header=1);
+observational_dat = np.genfromtxt('data/measurements/FontanaData-090817.txt',delimiter='\t',skip_header=1);
 
 from datetime import datetime
 july4_2015 = (datetime(2015, 7, 4, 0, 0)-datetime(1904, 1, 1, 0, 0)).total_seconds()
@@ -60,7 +52,6 @@ july7_2015 = (datetime(2015, 7, 7, 0, 0)-datetime(1904, 1, 1, 0, 0)).total_secon
 
 these, = np.nonzero((sum(np.vstack([observational_dat[:,1]<july4_2015, observational_dat[:,2]>july7_2015]),0)>0) & 
                     (observational_dat[:,15]>0)&~np.isnan(observational_dat[:,6]))
-#these, = &np.nonzero((observational_dat[:,15]>0)&~np.isnan(observational_dat[:,6]))#&(observational_dat[:,6]<1.4))
 
 BC_observed = observational_dat[these,7]
 Rbc_observed = observational_dat[these,15]
@@ -113,18 +104,14 @@ p_EgivenR_observed = savgol_filter(dNdE_observed,21,3,axis=0)
 ####################################################################################
 tt_max = 218
 wavelength = 532*1e-9
-#wavelength = 632*1e-9
-#wavelength = 405*1e-9
 
-read_dir = '/Users/fiercenator/stuff/projects/01_BCabs_mixing/model_dat/' + 'std_dev/'
-all_tt_i = np.loadtxt(read_dir + 'all_tt_i.txt')
-all_rr_i = np.loadtxt(read_dir + 'all_rr_i.txt')
+all_tt_i = np.loadtxt('data/partmc_std_dev/all_tt_i.txt')
+all_rr_i = np.loadtxt('data/partmc_std_dev/all_rr_i.txt')
 
-read_dir = '/Users/fiercenator/stuff/projects/01_BCabs_mixing/model_dat/' + 'wvl_' + str(round(wavelength*1e9)) + '/'
-all_Ri = np.loadtxt(read_dir + 'all_Ri.txt')
-all_wi = np.loadtxt(read_dir + 'all_wi.txt')
+all_Ri = np.loadtxt('data/partmc_bulk/all_Ri.txt')
+all_wi = np.loadtxt('data/partmc_bulk/all_wi.txt')
 
-all_Ei = np.loadtxt(read_dir + 'all_Ei.txt')
+all_Ei = np.loadtxt('data/partmc_bulk/all_Ei.txt')
 dNdE_lab =  np.zeros([len(Rbc_grid),len(Eabs_grid)])
 for rr in range(len(Rbc_grid)):
     these = sum(np.vstack(
@@ -146,7 +133,7 @@ for rr in range(len(Rbc_grid)):
 
 p_EgivenR_lab = savgol_filter(dNdE_lab,21,3,axis=0)
 
-all_Ei = np.loadtxt(read_dir + 'all_Ei_lab_uniform.txt')
+all_Ei = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
 dNdE_lab_uniform =  np.zeros([len(Rbc_grid),len(Eabs_grid)])
 for rr in range(len(Rbc_grid)):
     these = sum(np.vstack(
@@ -168,7 +155,7 @@ for rr in range(len(Rbc_grid)):
 
 p_EgivenR_lab_uniform = savgol_filter(dNdE_lab_uniform,21,3,axis=0)
 
-all_Ei = np.loadtxt(read_dir + 'all_Ei_cs.txt')
+all_Ei = np.loadtxt('data/partmc_bulk/all_Ei_cs.txt')
 dNdE_cs =  np.zeros([len(Rbc_grid),len(Eabs_grid)])
 for rr in range(len(Rbc_grid)):
     these = sum(np.vstack([all_Ri>=(Rbc_grid[rr]-dRbc/2),all_Ri<(Rbc_grid[rr]+dRbc/2)]))>1
@@ -187,7 +174,7 @@ for rr in range(len(Rbc_grid)):
 
 p_EgivenR_cs = savgol_filter(dNdE_cs,21,3,axis=0)
 
-all_Ei = np.loadtxt(read_dir + 'all_Ei_cs_uniform.txt')
+all_Ei = np.loadtxt('data/partmc_bulk/all_Ei_cs_uniform.txt')
 dNdE_cs_uniform =  np.zeros([len(Rbc_grid),len(Eabs_grid)])
 for rr in range(len(Rbc_grid)):
     these = sum(np.vstack(
@@ -259,13 +246,11 @@ best_guess_lab_uniform[these] = savgol_filter(best_guess_lab_uniform[these],3,1)
 best_guess_cs[these] = savgol_filter(best_guess_cs[these],3,1)
 best_guess_cs_uniform[these] = savgol_filter(best_guess_cs_uniform[these],3,1)
 
-read_dir_std = read_dir + '../std_dev/'
-#all_std_i = np.loadtxt(read_dir_std + 'all_log10std_i.txt')
-all_std_i =np.loadtxt(read_dir_std + 'all_log10std_mass_i.txt')
-all_Ei = np.loadtxt(read_dir + 'all_Ei.txt')
-all_Ei_lab_uniform = np.loadtxt(read_dir + 'all_Ei_lab_uniform.txt')
-all_Ei_cs_uniform = np.loadtxt(read_dir + 'all_Ei_lab_uniform.txt')
-all_Ei_cs = np.loadtxt(read_dir + 'all_Ei_lab_uniform.txt')
+all_std_i =np.loadtxt('data/partmc_std_dev/all_log10std_mass_i.txt')
+all_Ei = np.loadtxt('data/partmc_std_dev/all_Ei.txt')
+all_Ei_lab_uniform = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
+all_Ei_cs_uniform = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
+all_Ei_cs = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
 
 
 plt.scatter(all_Ri[idx],all_std_i[idx],10,all_Ei_lab_uniform[idx]-all_Ei[idx])
@@ -421,7 +406,7 @@ BvsR_lab_diverse = savgol_filter(vals_vsR_M2_lab,window,1)/savgol_filter(vals_vs
 #
 ####################################################################################
 
-vals = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/liu2017_2c/liu2017_2c-3.csv',delimiter=',')
+vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 not_empty = np.zeros(len(Rbc_grid_coarse))>0
 Rbc_grid_coarse = np.linspace(0,12,21)
 Rbc_mids_coarse = 0.5*(Rbc_grid_coarse[range(len(Rbc_grid_coarse)-1)] + Rbc_grid_coarse[range(1,len(Rbc_grid_coarse))])
@@ -432,9 +417,9 @@ for rr in range(1,len(Rbc_grid_coarse)):
     
 
 from scipy.stats import norm
-vals = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/liu2017_2c/liu2017_1a_lab-diesel_1fg.csv',delimiter=',')
+vals = np.loadtxt('data/measurements/liu2017_1a_lab-diesel_1fg.csv',delimiter=',')
 mu_Rbc_lab,std_Rbc_lab = norm.fit(np.log10(vals[:,0]),weights=vals[:,1])
-vals = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/liu2017_2c/liu2017_1a_SF_1fg.csv',delimiter=',')
+vals = np.loadtxt('data/measurements/liu2017_1a_SF_1fg.csv',delimiter=',')
 mu_Rbc_SF,std_Rbc_SF = norm.fit(np.log10(vals[:,0]),weights=vals[:,1])
 
 
@@ -473,7 +458,6 @@ medianprops = dict(linestyle='-', linewidth=1.5, color='k')
 meanprops = dict(markerfacecolor='k',markeredgecolor='k')
 
 ax1.plot(Rbc_grid,np.ones(len(Rbc_grid)),color='k',linewidth=1)
-#ax3.plot(Rbc_grid,np.ones(len(Rbc_grid)),color='k',linewidth=1)
 
 
 col = 'b'
@@ -489,10 +473,7 @@ f2 = ax1.fill_between(Rbc_grid,savgol_filter(Eabs_ci_cs[:,cc,0],window,1),savgol
 l2, = ax1.plot(Rbc_grid,best_guess_cs,color=col_cs_part,zorder=1); 
 f3 = ax1.fill_between(Rbc_grid,savgol_filter(Eabs_ci_lab_uniform[:,cc,0],window,1),savgol_filter(Eabs_ci_lab_uniform[:,cc,1],window,1),alpha=0.5,color=col_lab_uniform,zorder=2); 
 l3, = ax1.plot(Rbc_grid,best_guess_lab_uniform,color=col_lab_uniform,zorder=3); 
-#cc = 0
-#f4a = ax1.fill_between(Rbc_grid,savgol_filter(Eabs_ci_lab[:,cc,0],window,1),savgol_filter(Eabs_ci_lab[:,cc,1],window,1),alpha=0.08,color='k')
-#cc = 1
-#f4b = ax1.fill_between(Rbc_grid,savgol_filter(Eabs_ci_lab[:,cc,0],window,1),savgol_filter(Eabs_ci_lab[:,cc,1],window,1),alpha=0.25,color='C2')
+
 cc = 2
 f4 = ax1.fill_between(Rbc_grid,savgol_filter(Eabs_ci_lab[:,cc,0],window,1),savgol_filter(Eabs_ci_lab[:,cc,1],window,1),alpha=0.5,color=col_lab_part); 
 l4, = ax1.plot(Rbc_grid,best_guess_lab,color=col_lab_part); 
@@ -572,68 +553,40 @@ f7b = ax5.fill_between(np.linspace(0,std_mids.min(),10),
 scale_dRbc = 0.5
 alpha_val = 1
 rr = 0
-other_vals = np.loadtxt('peng2016_3c-220nm.csv',delimiter=',')
+other_vals = np.loadtxt('data/measurements/peng2016_3c-220nm.csv',delimiter=',')
 D0 = 220
 these = sum(np.vstack([(other_vals[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1]+scale_dRbc*dRbc,(other_vals[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]-scale_dRbc*dRbc]))>1
-other_vals2 = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/peng2016/peng2016_3c-150nm.csv',delimiter=',')
+other_vals2 = np.loadtxt('data/measurements/peng2016_3c-150nm.csv',delimiter=',')
 D0 = 150
 these2 = sum(np.vstack([(other_vals2[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1]+scale_dRbc*dRbc,(other_vals2[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]-scale_dRbc*dRbc]))>1
 
 wvl= 532e-9
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/Eabs_Summary_no-comments.csv',delimiter=',',skiprows=1)
+dat = np.loadtxt('data/measurements/fig1_BC4data',delimiter=',',skiprows=1)
 Rbc_vol_lab = dat[:,0]
 core_dia_lab =dat[:,5]
 if wvl == 532e-9:
-    Eabs_lab = dat[:,2]#/min(dat[idx_not_isnan,2])#/np.mean(dat[idx_bare,2])
+    Eabs_lab = dat[:,2]
 elif wvl == 632e-9:
-    Eabs_lab = dat[:,4]#/min(dat[idx_not_isnan,4])#/np.mean(dat[idx_bare,4])
+    Eabs_lab = dat[:,4]
 elif wvl == 405e-9:
-    Eabs_lab = dat[:,3]#/min(dat[idx_not_isnan,3])#/np.mean(dat[idx_bare,3])
+    Eabs_lab = dat[:,3]
 
-#these3 = sum(np.vstack([Rbc_vol_lab<Rbc_lims[rr][1],Rbc_vol_lab>=Rbc_lims[rr][0],~np.isnan(Eabs_lab)]))>2
-#ax3.errorbar(0,
-#             np.mean(Eabs_lab[these3]),np.std(Eabs_lab[these3]),
-#             fmt='ok',alpha=alpha_val)
-
-#dat = np.loadtxt('/Users/fiercenator/stuff/old_computer/code/BC_absorption/Eabs_lab_Onasch.csv',delimiter=',')
 these3 = sum(np.vstack([dat[:,0]<Rbc_lims[rr][1]+scale_dRbc*dRbc,dat[:,0]>=Rbc_lims[rr][0]-scale_dRbc*dRbc]))>1
-#ax3.errorbar(0,
-#             np.mean(np.hstack([other_vals[these,1],other_vals2[these2,1],dat[these3,1]])),
-#             np.std(np.hstack([other_vals[these,1],other_vals2[these2,1],dat[these3,1]])),
-#             fmt='ok',alpha=alpha_val)
-
 
 these3 = np.where((Rbc_vol_lab<Rbc_lims[rr][1]) & (Rbc_vol_lab>=Rbc_lims[rr][0]) & (~np.isnan(Eabs_lab)))
 ax3 .errorbar(0,
              np.mean(Eabs_lab[these3]),np.std(Eabs_lab[these3]),
              fmt='ok',alpha=alpha_val)
 
-#ax3.errorbar(0,
-#             np.mean(np.hstack([dat[these3,1]])),
-#             np.std(np.hstack([dat[these3,1]])),
-#             fmt='ok',alpha=alpha_val)
-
-
-#ax3.errorbar(0,
-#             np.mean(np.hstack([other_vals[these,1],other_vals2[these2,1]])),
-#             np.std(np.hstack([other_vals[these,1],other_vals2[these2,1]])),
-#             fmt='ok',alpha=alpha_val*0.5)
-#
-#ax3.errorbar(0,
-#             np.mean(dat[these3,1]),
-#             np.std(dat[these3,1]),
-#             fmt='ok',alpha=alpha_val)
-
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a4_1fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a4_1fg.csv',delimiter=',')
 Rbc_1fg,n_1fg = dat[:,0],dat[:,1]
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a4_2fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a4_2fg.csv',delimiter=',')
 Rbc_2fg,n_2fg = dat[:,0],dat[:,1]
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a4_3fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a4_3fg.csv',delimiter=',')
 Rbc_3fg,n_3fg = dat[:,0],dat[:,1]
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a4_5fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a4_5fg.csv',delimiter=',')
 Rbc_5fg,n_5fg = dat[:,0],dat[:,1]
 
-#std_chamber = 0.4
 mean_chamber = (
         sum(np.log10(Rbc_1fg)*n_1fg) + sum(np.log10(Rbc_2fg)*n_2fg) + sum(np.log10(Rbc_3fg)*n_3fg)+ sum(np.log10(Rbc_5fg)*n_5fg))/(sum(n_1fg) + sum(n_2fg) + sum(n_3fg) + sum(n_5fg))
 std_chamber = np.round(np.sqrt(((sum(n_1fg*(np.log10(Rbc_1fg)-mean_chamber)**2) + 
@@ -641,24 +594,17 @@ std_chamber = np.round(np.sqrt(((sum(n_1fg*(np.log10(Rbc_1fg)-mean_chamber)**2) 
  sum(n_3fg*(np.log10(Rbc_3fg)-mean_chamber)**2) + 
  sum(n_5fg*(np.log10(Rbc_5fg)-mean_chamber)**2))/(sum(n_1fg) + sum(n_2fg) + sum(n_3fg) + sum(n_5fg)))),1)
 
-
-vals = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/liu2017_2c/liu2017_2c-3.csv',delimiter=',')
+vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 these = sum(np.vstack([vals[:,0]<Rbc_lims[rr][1],vals[:,0]>=Rbc_lims[rr][0]]))>1
 ax3.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
 
 
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a3_1fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a3_1fg.csv',delimiter=',')
 Rbc_1fg,n_1fg = dat[:,0],dat[:,1]
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a3_2fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a3_2fg.csv',delimiter=',')
 Rbc_2fg,n_2fg = dat[:,0],dat[:,1]
-dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a3_5fg.csv',delimiter=',')
+dat = np.loadtxt('data/measurements/fig1a3_5fg.csv',delimiter=',')
 Rbc_5fg,n_5fg = dat[:,0],dat[:,1]
-#dat = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/lit/fig1a3_10fg.csv',delimiter=',')
-#Rbc_10fg,n_10fg = dat[:,0],dat[:,1]
-
-#np.round(np.sqrt(((sum(n_1fg*(np.log10(Rbc_1fg)-sum(np.log10(Rbc_1fg)*n_1fg)/sum(n_1fg))**2) + 
- #sum(n_2fg*(np.log10(Rbc_2fg)-sum(np.log10(Rbc_2fg)*n_2fg)/sum(n_2fg))**2) + 
- #sum(n_5fg*(np.log10(Rbc_5fg)-sum(np.log10(Rbc_5fg)*n_5fg)/sum(n_5fg))**2))/(sum(n_1fg) + sum(n_2fg) + sum(n_5fg)))),1)
 
 mean_ambient = (
         sum(np.log10(Rbc_1fg)*n_1fg) + sum(np.log10(Rbc_2fg)*n_2fg) + sum(np.log10(Rbc_5fg)*n_5fg))/(sum(n_1fg) + sum(n_2fg) + sum(n_5fg))
@@ -668,57 +614,22 @@ std_ambient = np.round(np.sqrt(((
         sum(n_5fg*(np.log10(Rbc_5fg)-mean_ambient)**2))/(sum(n_1fg) + sum(n_2fg) + sum(n_5fg)))),1)
 
 
-#mean_ambient = (
-#        sum(np.log10(Rbc_1fg)*n_1fg) + sum(np.log10(Rbc_2fg)*n_2fg) + sum(np.log10(Rbc_5fg)*n_5fg) + sum(np.log10(Rbc_10fg)*n_10fg))/(sum(n_1fg) + sum(n_2fg) + sum(n_5fg) + sum(n_10fg))
-#std_ambient = np.round(np.sqrt(((
-#        sum(n_1fg*(np.log10(Rbc_1fg)-mean_ambient)**2) + 
-#        sum(n_2fg*(np.log10(Rbc_2fg)-mean_ambient)**2) + 
-#        sum(n_5fg*(np.log10(Rbc_5fg)-mean_ambient)**2) + 
-#        sum(n_10fg*(np.log10(Rbc_10fg)-mean_ambient)**2))/(sum(n_1fg) + sum(n_2fg) + sum(n_5fg) + sum(n_10fg)))),1)
-
-
 these = sum(np.vstack([Rbc_observed<Rbc_lims[rr][1],Rbc_observed>=Rbc_lims[rr][0]]))>1
 ax3.boxplot(Eabs_observed[these],positions=[std_ambient], showfliers=False,whis=[5,95],widths=0.15,#showmeans=True,
             medianprops=medianprops,meanprops=meanprops,zorder=10);
             
              
 rr = 1
-#these = sum(np.vstack([(other_vals[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1],(other_vals[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]]))>1
-#these2 = sum(np.vstack([(other_vals2[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1],(other_vals2[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]]))>1
-#these3 = sum(np.vstack([dat[:,0]<Rbc_lims[rr][1],dat[:,0]>=Rbc_lims[rr][0]]))>1
-
-#these3 = sum(np.vstack([Rbc_vol_lab<Rbc_lims[rr][1],Rbc_vol_lab>=Rbc_lims[rr][0],~np.isnan(Eabs_lab)]))>2
 these3 = np.where((Rbc_vol_lab<Rbc_lims[rr][1]) & (Rbc_vol_lab>=Rbc_lims[rr][0]) & (~np.isnan(Eabs_lab)))
 ax4.errorbar(0,
              np.mean(Eabs_lab[these3]),np.std(Eabs_lab[these3]),
              fmt='ok',alpha=alpha_val)
-#ax4.errorbar(0,
-#             np.mean(np.hstack([dat[these3,1]])),
-#             np.std(np.hstack([dat[these3,1]])),
-#             fmt='ok',alpha=alpha_val)
-
-
-#ax4.errorbar(0,
-#             np.mean(np.hstack([other_vals[these,1],other_vals2[these2,1],dat[these3,1]])),
-#             np.std(np.hstack([other_vals[these,1],other_vals2[these2,1],dat[these3,1]])),
-#             fmt='ok',alpha=alpha_val)
-
-
-#ax4.errorbar(0,
-#             np.mean(np.hstack([other_vals[these,1],other_vals2[these2,1]])),
-#             np.std(np.hstack([other_vals[these,1],other_vals2[these2,1]])),
-#             fmt='ok',alpha=alpha_val*0.5,zorder=10)
-#
-#ax4.errorbar(0,
-#             np.mean(dat[these3,1]),
-#             np.std(dat[these3,1]),
-#             fmt='ok',alpha=alpha_val)
-vals = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/liu2017_2c/liu2017_2c-3.csv',delimiter=',')
+vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 these = sum(np.vstack([vals[:,0]<Rbc_lims[rr][1],vals[:,0]>=Rbc_lims[rr][0]]))>1
 ax4.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
 
 these = sum(np.vstack([Rbc_observed<Rbc_lims[rr][1],Rbc_observed>=Rbc_lims[rr][0]]))>1
-ax4.boxplot(Eabs_observed[these],positions=[std_ambient], showfliers=False,whis=[5,95],widths=0.15,#showmeans=True,
+ax4.boxplot(Eabs_observed[these],positions=[std_ambient], showfliers=False,whis=[5,95],widths=0.15,
             medianprops=medianprops,meanprops=meanprops);
             
 rr = 2            
@@ -726,38 +637,8 @@ these3 = np.where((Rbc_vol_lab<Rbc_lims[rr][1]) & (Rbc_vol_lab>=Rbc_lims[rr][0])
 h_lab1 = ax5.errorbar(0,
              np.mean(Eabs_lab[these3]),np.std(Eabs_lab[these3]),
              fmt='ok',alpha=alpha_val)
-#these = sum(np.vstack([(other_vals[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1],(other_vals[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]]))>1
-#these2 = sum(np.vstack([(other_vals2[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1],(other_vals2[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]]))>1
-#these3 = sum(np.vstack([dat[:,0]<Rbc_lims[rr][1],dat[:,0]>=Rbc_lims[rr][0]]))>1
 
-#h_lab1a = ax5.errorbar(0,
-#             np.mean(dat[these3,1]),
-#             np.std(dat[these3,1]),
-#             fmt='ok',alpha=alpha_val)
-#
-#h_lab1b = ax5.errorbar(0,
-#             np.mean(np.hstack([other_vals[these,1],other_vals2[these2,1]])),
-#             np.std(np.hstack([other_vals[these,1],other_vals2[these2,1]])),
-#             fmt='ok',alpha=alpha_val*0.5,zorder=10)
-#
-#h_lab1a = ax5.errorbar(0,
-#             np.mean(dat[these3,1]),
-#             np.std(dat[these3,1]),
-#             fmt='ok',alpha=alpha_val)
-
-
-#h_lab1 = ax5.errorbar(0,
-#             np.mean(np.hstack([other_vals[these,1],other_vals2[these2,1],dat[these3,1]])),
-#             np.std(np.hstack([other_vals[these,1],other_vals2[these2,1],dat[these3,1]])),
-#             fmt='ok',alpha=alpha_val)
-
-#h_lab1 = ax5.errorbar(0,
-#             np.mean(np.hstack([dat[these3,1]])),
-#             np.std(np.hstack([dat[these3,1]])),
-#             fmt='ok',alpha=alpha_val)
-
-
-vals = np.loadtxt('/Users/fiercenator/stuff/projects/01_BCabs_mixing/liu2017_2c/liu2017_2c-3.csv',delimiter=',')
+vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 these = sum(np.vstack([vals[:,0]<Rbc_lims[rr][1],vals[:,0]>=Rbc_lims[rr][0]]))>1
 h_lab2 = ax5.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
 
@@ -766,16 +647,10 @@ these = sum(np.vstack([Rbc_observed<Rbc_lims[rr][1],Rbc_observed>=Rbc_lims[rr][0
 h_obs = ax5.boxplot(Eabs_observed[these],positions=[std_ambient], showfliers=False,whis=[5,95],widths=0.15,#showmeans=True,
             medianprops=medianprops,meanprops=meanprops);
             
-#ax3.set_xlim([-0.1,1.2])
-#ax4.set_xlim([-0.1,1.2])
-#ax5.set_xlim([-0.1,1.2])
 ax3.set_xlim([-0.1,0.9])
 ax4.set_xlim([-0.1,0.9])
 ax5.set_xlim([-0.1,0.9])
 
-#ax3.set_ylim([0.75,2.])
-#ax4.set_ylim([0.75,2.])
-#ax5.set_ylim([0.75,2.])
 ax3.set_ylim([0.75,1.9])
 ax4.set_ylim([0.75,1.9])
 ax5.set_ylim([0.75,1.9])
@@ -788,7 +663,6 @@ xtick_labels = [ "%d" % int(float(l)) for l in xticks]
 ax1.set_xticklabels(xtick_labels)
 
 ylims = ax2.get_ylim()
-#ax1.set_ylim([0.75,2])
 ax1.set_ylim([0.75,1.85])
 ax1.set_xlim([0.5,12.5])
 
@@ -796,12 +670,8 @@ ax3.set_yticks([1,1.4,1.8])
 ax4.set_yticks([1,1.4,1.8])
 ax5.set_yticks([1,1.4,1.8])
 
-#ax3.set_yticks([1,1.5,2])
-#ax4.set_yticks([1,1.5,2])
-#ax5.set_yticks([1,1.5,2])
 ax4.set_yticklabels('')
 ax5.set_yticklabels('')
-#xticks = [0,0.5,1]
 xticks = [0,0.4,0.8]
 ax3.set_xticks(xticks)
 ax3.set_xticklabels(xticks)
@@ -814,11 +684,10 @@ ax2.set_xscale('log')
 ax2.set_xlim([0.5,200])
 ax2.set_xticks([1.,10.,100.])
 ax2.set_yticklabels('')
-#ax2.xaxis.set_ticks_position('top')
 
 ax2.spines['right'].set_visible(False)
 ax2.spines['top'].set_visible(False)
-#
+
 ax6.set_xticklabels('')
 ax6.set_yticklabels('')
 ax6.set_yticks([])
@@ -839,5 +708,3 @@ ax2.text(10**(np.log10(B_lab_diverse)+0.1),ind[2],'including deviation\nfrom cor
 lg2 = ax6.legend([h_lab1,h_lab2,h_obs["boxes"][0],f7a],['lab, monodisperse BC$^\mathrm{i}$','lab, chamber studies$^\mathrm{ii}$','observations of BC\nin urban outflow$^\mathrm{iii}$', 'model (this study)'],bbox_to_anchor = (-0.1,1.05), loc='upper left',fontsize=10)
 ax6.text(-0.,0.16,'(i) BC4, Peng et al., 2016 (ii) Liu \net al., 2017, (iii) Cappa et al., 2019',fontsize=8,verticalalignment='top')
 fig.subplots_adjust(hspace=0.2,wspace=0.8,top=1.05,bottom=0.)
-
-fig.savefig('figs/fig3.png',format='png', dpi=1000)

@@ -87,3 +87,17 @@ def get_Eabs_param(Rbc_lab, Eabs_cs, param_type, params):
         Rbc_effective = Rbc_lab*f_offset
         Eabs = interp1d(np.hstack([0.,Rbc_lab]),np.hstack([1.,Eabs_cs]))(Rbc_effective)
     return Eabs
+
+def gaussian_kernel_scalar(x, x_i, hx):
+    import numpy as np
+    K = np.exp(-((x-x_i)/hx)**2/2);
+    if abs(x-x_i) > hx*10.:
+        K = 0.0
+    return K
+
+def gaussian_kernel(x, x_i, hx):
+    import numpy as np
+    K = np.exp(-((x-x_i)/hx)**2/2);
+    too_big = abs(x-x_i) > hx*100.
+    K[too_big] = 0.0
+    return K

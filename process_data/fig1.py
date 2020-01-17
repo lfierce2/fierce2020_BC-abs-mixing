@@ -34,7 +34,7 @@ wvls = [405e-9, 532e-9, 632e-9]
 #
 ####################################################################################
 
-dat = np.loadtxt('fig1_BC4data.csv',delimiter=',',skiprows=1)
+dat = np.loadtxt('data/measurements/fig1_BC4data.csv',delimiter=',',skiprows=1)
 idx_notisnan, = np.where(~np.isnan(dat[:,7]));
 Rbc_vol = dat[:,0]
 idx_sorted = np.argsort(Rbc_vol)
