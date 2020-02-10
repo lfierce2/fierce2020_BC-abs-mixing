@@ -1,4 +1,4 @@
-# Radiative absorption enhancements measurements, simulations, and processing script
+# Measurements, simulations, and processing code for "Radiative absorption enhancements by black carbon controlled by particle-to-particle heterogeneity in composition"
 
 Description: This repository contains the simulation input files, laboratory measurements, field measurements, and processing script used in the analysis presented in Fierce et al., 2020. The repository includes PartMC-MOSAIC simulation input files that can be used to re-create the simulation library. The simulations can be run with PartMC version 2.1.5, which is available at http://lagrange.mechse.illinois.edu/partmc/. The repository also contains laboratory measurements from the 4th Boston College (BC4) Experiment and field observations from Fontana, CA (Cappa et al., JGR 2019).
 
