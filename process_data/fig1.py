@@ -1,13 +1,13 @@
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.stats import norm    
+#from scipy.stats import norm    
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import PyMieScatt
 from matplotlib.collections import PolyCollection
 from matplotlib import cm
 import matplotlib as mpl
-
+import numpy as np
 from helper import *
 
 import PyMieScatt 
@@ -130,21 +130,23 @@ for ww in range(1,len(wvls)):
     all_Rbc_vol = np.hstack([all_Rbc_vol,Rbc_vol.reshape([-1,1])])
 
 
-params = get_Eabs_model_params_redo(all_Rbc_vol.ravel(),
+params = get_Eabs_model_params(all_Rbc_vol.ravel(),
                                     Eabs_cs.ravel(), Eabs_lab.ravel(), param_type, params_range, N, N_burn)
 
 wvl = 532e-9
 ww = 0
 
 
-Eabs_param[:,ww] = get_Eabs_param_redo(Rbc_vol, Eabs_cs[:,ww], param_type, np.mean(params,axis=0))
-Eabs_param_2fg[:,ww] = get_Eabs_param_redo(Rbc_vol, Eabs_cs_2fg[:,ww], param_type, np.mean(params,axis=0))
-Eabs_param_5fg[:,ww] = get_Eabs_param_redo(Rbc_vol, Eabs_cs_5fg[:,ww], param_type, np.mean(params,axis=0))
-Eabs_param_10fg[:,ww] = get_Eabs_param_redo(Rbc_vol, Eabs_cs_10fg[:,ww], param_type, np.mean(params,axis=0))    
-Eabs_param_20fg[:,ww] = get_Eabs_param_redo(Rbc_vol, Eabs_cs_20fg[:,ww], param_type, np.mean(params,axis=0))        
+Eabs_param[:,ww] = get_Eabs_param(Rbc_vol, Eabs_cs[:,ww], param_type, np.mean(params,axis=0))
+Eabs_param_2fg[:,ww] = get_Eabs_param(Rbc_vol, Eabs_cs_2fg[:,ww], param_type, np.mean(params,axis=0))
+Eabs_param_5fg[:,ww] = get_Eabs_param(Rbc_vol, Eabs_cs_5fg[:,ww], param_type, np.mean(params,axis=0))
+Eabs_param_10fg[:,ww] = get_Eabs_param(Rbc_vol, Eabs_cs_10fg[:,ww], param_type, np.mean(params,axis=0))    
+Eabs_param_20fg[:,ww] = get_Eabs_param(Rbc_vol, Eabs_cs_20fg[:,ww], param_type, np.mean(params,axis=0))        
 
-fig = plt.figure()
+fig = plt.figure(num=None, figsize=(9.5,4.8), facecolor='w', edgecolor='k')
 ax = fig.subplots(1)
+#fig.subplots_adjust(right=0.9,left=0.1,top=0.99,bottom=0.03,hspace=0.25,wspace=0.35)
+fig.subplots_adjust(right=0.7)
 
 hln_cs_2fg, = ax.plot(Rbc_vol[idx_sorted],Eabs_cs_2fg[idx_sorted,ww],color='k',linestyle=':')    
 hln_cs_5fg, = ax.plot(Rbc_vol[idx_sorted],Eabs_cs_5fg[idx_sorted,ww],color='k',linestyle='-.')    
@@ -192,7 +194,7 @@ herr_lab = ax.errorbar(Rbc_vol[these],Eabs_lab[these,ww],yerr=0.08,ecolor='k',fm
 #
 ####################################################################################
     
-observational_dat = np.genfromtxt('FontanaData-090817.txt',delimiter='\t',skip_header=1);
+observational_dat = np.genfromtxt('data/measurements/FontanaData-090817.txt',delimiter='\t',skip_header=1);
 
 from datetime import datetime
 july4_2015 = (datetime(2015, 7, 4, 0, 0)-datetime(1904, 1, 1, 0, 0)).total_seconds()
@@ -242,7 +244,7 @@ hsc_lab1 = [hsc_lab1[0],hsc_lab1[1],ax.scatter(-10,-10,s=10*10,c='w',edgecolor='
 hsc_lab1 = [hsc_lab1[0],hsc_lab1[1],hsc_lab1[2],ax.scatter(-10,-10,s=10*20,c='w',edgecolor='k')]
 
 types = np.array([0.,1.,2.])
-type_labs = [r'$\alpha$-Pinene SOA', 'H$_2$SO$_4$', r'H$_2$SO$_4$ + $\alpha$-Pinene SOA']
+type_labs = [r'$\alpha$-Pinene'+' secondary \n organic aerosol', 'H$_2$SO$_4$', r'H$_2$SO$_4$ + $\alpha$-Pinene' + '\n secondary organic aerosol']
 cols = cm.Reds(types/2)
 
 hsc_lab2 = ax.scatter(-10,-10,s=10*5,c=cols[0,:],edgecolor='k')
@@ -260,12 +262,13 @@ ax.set_xlim([0,12.5])
 
 ax.set_xlabel('$R_{\mathrm{BC}}$')
 ax.set_ylabel('absorption enhancement, $E_{\mathrm{abs}}$')
-
-
-hleg1 = ax.legend(hsc_lab2,type_labs,title='coating type',loc=(1.0,1.0),bbox_to_anchor=(0.5,0.6),framealpha=1.)
-hleg2 = ax.legend(hsc_lab1,['2 fg', '5 fg','10 fg','20 fg'],title='mass of BC core',loc=(1.0,1.0),bbox_to_anchor=(0.5,0.237),framealpha=1.)
+fig.savefig('../figs/fig1.png',format='png', dpi=1000)
+hleg1 = ax.legend(hsc_lab2,type_labs,title='coating type',loc=(1.0,1.0),bbox_to_anchor=(1.02,0.62),framealpha=1.,frameon=False)
+hleg2 = ax.legend(hsc_lab1,['2 fg', '5 fg','10 fg','20 fg'],title='mass of BC core',loc=(1.0,1.0),bbox_to_anchor=(1.02,0.31),framealpha=1.,frameon=False)
 
 ax.add_artist(hleg2)
-hleg3 = ax.legend([hln_cs_2fg,hln_cs_5fg,hln_cs_10fg,hln_cs_20fg],['2 fg','5 fg','10 fg', '20 fg'],title='core-shell model',loc=(1.0,1.0),bbox_to_anchor=(0.5,-0.125),framealpha=1.)
+hleg3 = ax.legend([hln_cs_2fg,hln_cs_5fg,hln_cs_10fg,hln_cs_20fg],['2 fg','5 fg','10 fg', '20 fg'],title='core-shell model',loc=(1.0,1.0),bbox_to_anchor=(1.02,0.),framealpha=1.,frameon=False)
 ax.add_artist(hleg1)
 ax.add_artist(hleg2)
+#fig.subplots_adjust(hspace=0.11,wspace=0.89,top=0.99,bottom=0.02)
+fig.savefig('../figs/fig1_leg.png',format='png', dpi=2000)

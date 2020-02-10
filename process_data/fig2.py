@@ -16,8 +16,9 @@ import PyMieScatt
 from matplotlib.collections import PolyCollection
 from matplotlib import cm
 import matplotlib as mpl
-from Bayes_model_fitting import *
-from gaussian_kde_weighted import *
+from helper import *
+#from Bayes_model_fitting import *
+#from gaussian_kde_weighted import *
 from scipy.stats import gaussian_kde
 # =============================================================================
 # LOAD TOOLBOX
@@ -247,14 +248,13 @@ best_guess_cs[these] = savgol_filter(best_guess_cs[these],3,1)
 best_guess_cs_uniform[these] = savgol_filter(best_guess_cs_uniform[these],3,1)
 
 all_std_i =np.loadtxt('data/partmc_std_dev/all_log10std_mass_i.txt')
-all_Ei = np.loadtxt('data/partmc_std_dev/all_Ei.txt')
+#all_Ei = np.loadtxt('data/partmc_std_dev/all_Ei.txt')
+all_Ei = np.loadtxt('data/partmc_bulk/all_Ei.txt')
 all_Ei_lab_uniform = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
 all_Ei_cs_uniform = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
 all_Ei_cs = np.loadtxt('data/partmc_bulk/all_Ei_lab_uniform.txt')
 
 
-plt.scatter(all_Ri[idx],all_std_i[idx],10,all_Ei_lab_uniform[idx]-all_Ei[idx])
-plt.colorbar()
 #
 Rbc_lims = [
         [1.8,2.2],
@@ -287,7 +287,7 @@ for rr in range(0,len(Rbc_lims)):
 h_s = 0.1
 h_R = 0.3
 
-these_Rbc = [2.5,4.5,6.5]
+these_Rbc = [2.5,4.0,5.5]
 Eabs_best_ss = np.zeros([len(these_Rbc),len(std_mids)])
 Rbc_lims = list([np.zeros(2),np.zeros(2),np.zeros(2)])
 Eabs_ci_ss = np.zeros([len(these_Rbc),len(std_mids)+1,len(ci_vals),2])
@@ -440,7 +440,10 @@ for rr in range(1,len(Rbc_grid_coarse)):
 ####################################################################################
 
 cols = plt.cm.viridis([0,0.5,1])
-fig = plt.figure(num=None, figsize=(8.,4.5), facecolor='w', edgecolor='k')
+#fig = plt.figure(num=None, figsize=(9.6,5.4), facecolor='w', edgecolor='k')
+#fig = plt.figure(num=None, figsize=(8.,4.5), facecolor='w', edgecolor='k')
+fig = plt.figure(num=None, figsize=(9.5,6.5), facecolor='w', edgecolor='k')
+#fig = plt.figure(num=None, figsize=(11,5.85), facecolor='w', edgecolor='k')
 ax1 = plt.subplot2grid((10,10), (2, 0), rowspan=4, colspan=6, fig=fig)
 ax2 = plt.subplot2grid((10,10), (2, 6), rowspan=4, colspan=2, fig=fig)
 ax3 = plt.subplot2grid((10,10), (7, 0), rowspan=2, colspan=2, fig=fig)
@@ -489,7 +492,7 @@ pm.set_facecolor(col_lab_uniform)
 pc.set_facecolor(col_cs_part)#[255/255,204/255,0/255])
 pn.set_facecolor(col_lab_part)
 
-lg1a = ax1.legend([f1,f4,f3,f2,h_obs2['boxes'][0]],['default model', 'best model', 'deviation from core-shell only', 'heterogeneity in $R_{\mathrm{BC}}$ only','observations of\nBC in urban outflow',],bbox_to_anchor=(0,1.02),loc="lower left",edgecolor=None,ncol=3)
+lg1a = ax1.legend([f1,f4,f3,f2,h_obs2['boxes'][0]],['default model', 'best model', 'deviation from core-shell only', 'heterogeneity in $R_{\mathrm{BC}}$ only','\nobservations of\nBC in urban outflow',],bbox_to_anchor=(0,1.02),loc="lower left",edgecolor=None,ncol=3)
 
 ax1.add_artist(lg1a)
 
@@ -561,7 +564,7 @@ D0 = 150
 these2 = sum(np.vstack([(other_vals2[:,0]*D0+D0)**3/D0**3<Rbc_lims[rr][1]+scale_dRbc*dRbc,(other_vals2[:,0]*D0+D0)**3/D0**3>=Rbc_lims[rr][0]-scale_dRbc*dRbc]))>1
 
 wvl= 532e-9
-dat = np.loadtxt('data/measurements/fig1_BC4data',delimiter=',',skiprows=1)
+dat = np.loadtxt('data/measurements/fig1_BC4data.csv',delimiter=',',skiprows=1)
 Rbc_vol_lab = dat[:,0]
 core_dia_lab =dat[:,5]
 if wvl == 532e-9:
@@ -574,7 +577,7 @@ elif wvl == 405e-9:
 these3 = sum(np.vstack([dat[:,0]<Rbc_lims[rr][1]+scale_dRbc*dRbc,dat[:,0]>=Rbc_lims[rr][0]-scale_dRbc*dRbc]))>1
 
 these3 = np.where((Rbc_vol_lab<Rbc_lims[rr][1]) & (Rbc_vol_lab>=Rbc_lims[rr][0]) & (~np.isnan(Eabs_lab)))
-ax3 .errorbar(0,
+ax3.errorbar(0,
              np.mean(Eabs_lab[these3]),np.std(Eabs_lab[these3]),
              fmt='ok',alpha=alpha_val)
 
@@ -596,7 +599,8 @@ std_chamber = np.round(np.sqrt(((sum(n_1fg*(np.log10(Rbc_1fg)-mean_chamber)**2) 
 
 vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 these = sum(np.vstack([vals[:,0]<Rbc_lims[rr][1],vals[:,0]>=Rbc_lims[rr][0]]))>1
-ax3.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
+#ax3.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
+h_lab2 = ax3.scatter(std_chamber, np.mean(vals[these,1]), 80, 'k', marker='*',alpha=alpha_val)
 
 
 dat = np.loadtxt('data/measurements/fig1a3_1fg.csv',delimiter=',')
@@ -626,7 +630,8 @@ ax4.errorbar(0,
              fmt='ok',alpha=alpha_val)
 vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 these = sum(np.vstack([vals[:,0]<Rbc_lims[rr][1],vals[:,0]>=Rbc_lims[rr][0]]))>1
-ax4.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
+#ax4.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
+ax4.scatter(std_chamber, np.mean(vals[these,1]), 80, 'k', marker='*',alpha=alpha_val)
 
 these = sum(np.vstack([Rbc_observed<Rbc_lims[rr][1],Rbc_observed>=Rbc_lims[rr][0]]))>1
 ax4.boxplot(Eabs_observed[these],positions=[std_ambient], showfliers=False,whis=[5,95],widths=0.15,
@@ -640,7 +645,8 @@ h_lab1 = ax5.errorbar(0,
 
 vals = np.loadtxt('data/measurements/liu2017_2c-3.csv',delimiter=',')
 these = sum(np.vstack([vals[:,0]<Rbc_lims[rr][1],vals[:,0]>=Rbc_lims[rr][0]]))>1
-h_lab2 = ax5.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
+#h_lab2 = ax5.errorbar(std_chamber, np.mean(vals[these,1]), np.std(vals[these,1]), fmt='*k',alpha=alpha_val)
+ax5.scatter(std_chamber, np.mean(vals[these,1]), 80, 'k', marker='*',alpha=alpha_val)
 
 
 these = sum(np.vstack([Rbc_observed<Rbc_lims[rr][1],Rbc_observed>=Rbc_lims[rr][0]]))>1
@@ -705,6 +711,7 @@ ax4.set_xlabel('variability in per-particle $R_\mathrm{BC}$')
 ax2.text(10**(np.log10(B_lab_uniform)+0.1),ind[0],'including deviation\nfrom core-shell only',verticalalignment='center')
 ax2.text(10**(np.log10(B_cs_diverse)+0.1),ind[1],'including heterogeneity\nin $R_{\mathrm{BC}}$ only',verticalalignment='center')
 ax2.text(10**(np.log10(B_lab_diverse)+0.1),ind[2],'including deviation\nfrom core-shell and\nheterogeneity in $R_{\mathrm{BC}}$',verticalalignment='center')
-lg2 = ax6.legend([h_lab1,h_lab2,h_obs["boxes"][0],f7a],['lab, monodisperse BC$^\mathrm{i}$','lab, chamber studies$^\mathrm{ii}$','observations of BC\nin urban outflow$^\mathrm{iii}$', 'model (this study)'],bbox_to_anchor = (-0.1,1.05), loc='upper left',fontsize=10)
-ax6.text(-0.,0.16,'(i) BC4, Peng et al., 2016 (ii) Liu \net al., 2017, (iii) Cappa et al., 2019',fontsize=8,verticalalignment='top')
-fig.subplots_adjust(hspace=0.2,wspace=0.8,top=1.05,bottom=0.)
+lg2 = ax6.legend([h_lab1,h_lab2,h_obs["boxes"][0],f7a],['lab, monodisperse BC$^\mathrm{i}$','lab, chamber studies$^\mathrm{ii}$','observations of BC\nin urban outflow$^\mathrm{iii}$', 'model (this study)'],bbox_to_anchor = (0.,1.05), loc='upper left')
+ax6.text(0.03,0.39,'(i) BC4, Peng et al., 2016 (ii) Liu et\nal., 2017, (iii) Cappa et al., 2019',fontsize=8,verticalalignment='top')
+fig.subplots_adjust(right=0.9,left=0.1,top=0.99,bottom=0.03,hspace=0.25,wspace=0.35)
+fig.savefig('../figs/fig2.png',format='png', dpi=1000)

@@ -5,6 +5,8 @@ Created on Thu Jan 16 09:49:28 2020
 
 @author: fiercenator
 """
+import numpy as np
+from scipy.stats import norm    
 
 def get_Eabs_model_params(Rbc_lab, Eabs_cs, Eabs_lab, param_type, params_range, N, N_burn):
     params_old = np.zeros(len(params_range))
